@@ -1,0 +1,130 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="noisey-node">
+    <template>
+        <style>
+            :host {
+                display: inline-block;
+                position: relative !important;
+            }
+
+            #noiseHolder {
+                display: inline-block;
+                visibility: hidden;
+            }
+
+            .noise-layer {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                user-select: none;
+                cursor: default;
+            }
+        </style>
+
+        <span id="slotHolder">
+            <slot id="textSlot"></slot>
+        </span>
+        <div id="noiseHolder">
+        </div>
+
+    </template>
+
+    <script>
+        /**
+         * `noisey-node`
+         * Experimenting with making a cool noise effect inspired by mnmly
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class NoiseyNode extends Polymer.Element {
+            static get is() {
+                return 'noisey-node';
+            }
+            static get properties() {
+                return {
+                    numLines: {
+                        type: Number,
+                        value: 50,
+                        observer: "_numLinesChanged"
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+                
+
+                this.addEventListener('mousemove', () => {
+                    this.startNoise();
+                });
+            }
+
+            _chop() {
+                const text = this.textContent;
+                
+                const slotNodes = this.$.textSlot
+                .assignedNodes({flatten:true});
+
+                this.layers = [];
+
+                
+                const layerSize = 100/this.numLines;
+                
+
+                for (let i = 0; i < this.numLines; i++) {
+                    const noiseLayer = document.createElement('div');
+                    
+                    for( let i=0; i<slotNodes.length; i++) {
+                        noiseLayer.appendChild(slotNodes[i].cloneNode(true));
+                    }    
+                    
+                    noiseLayer.classList.add('noise-layer');
+
+                    const top = (100-i*layerSize-layerSize), bottom = (i*layerSize);
+                    noiseLayer.style.clipPath = `inset(${top}% 0% ${bottom}% 0%)`;
+
+                    this.$.noiseHolder.appendChild(noiseLayer);
+                    this.layers.push(noiseLayer);
+                }
+            }
+
+            startNoise() {
+                this.noiseTick = 0;
+                this.maxNoiseTick = 40;
+                this.$.noiseHolder.style.visibility = "visible";
+                this.$.slotHolder.style.opacity = 0.2;
+                requestAnimationFrame( () => {
+                    this.applyNoise();
+                })
+            }
+
+            applyNoise() {
+                const lastTick = ( ++this.noiseTick >= this.maxNoiseTick );
+
+                this.layers.forEach( (layer, indx)  => {
+                    const randX = Math.random() * 3 * (Math.random() > 0.5 ? 1 : -1);
+                    const randY = Math.random() * (Math.random() > 0.5 ? 1 : -1);
+                    layer.style.transform = (lastTick) ? `translate3d(0, 0, 0)` : `translate3d(${randX}px, ${randY}px, 0)`;
+                })
+
+                if( !lastTick ) {
+                    requestAnimationFrame( () => { 
+                        this.applyNoise(); 
+                    } );
+                } else {
+                    this.$.noiseHolder.style.visibility = "hidden";
+                    this.$.slotHolder.style.opacity = 1.0;
+                }
+            }
+
+            _numLinesChanged(){
+                this._chop();
+            }
+        }
+
+        window.customElements.define(NoiseyNode.is, NoiseyNode);
+    </script>
+</dom-module>

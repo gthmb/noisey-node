@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>noisey-node demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../noisey-node.html">
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+            demo-snippet {
+                color: red;
+                font-family: Lato, sans-serif;
+                font-size: 45px;
+            }
+
+            span {
+                color: yellowgreen;
+            }
+        </style>
+    </custom-style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>Basic Demo</h3>
+        <demo-snippet>
+            <template>
+                <noisey-node>
+                    If you hover over this <strong>content</strong>, you will see the noise effect.
+                    It works with <span>child nodes</span>. <a href="#foo">Here is a link</a>.
+                    <img class="demo-img" style="float: right" src="https://www.uplabs.com/tools/polymer.png">
+                </noisey-node>
+            </template>
+        </demo-snippet>
+    </div>
+
+    <div class="vertical-section-container centered">
+        <h3>Configuring num-lines</h3>
+        <demo-snippet>
+            <template>
+                <div>
+                    <noisey-node>You can set the num-lines property to control how many vertical layers are used during the effect</noisey-node>
+                    <noisey-node num-lines="100">More is fun,</noisey-node>
+                    <noisey-node num-lines="5">but fewer is cool too</noisey-node>
+                    <noisey-node num-lines="200">Dont get too crazy... each line is a div!</noisey-node>
+                </div>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>
